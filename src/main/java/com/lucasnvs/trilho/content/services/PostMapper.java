@@ -24,7 +24,6 @@ public class PostMapper {
         Post post = new Post();
         post.setTitle(createPost.getTitle());
         post.setAuthor(createPost.getAuthor());
-        post.setImageResource(createPost.getImageResource());
         post.setContent(createPost.getContent());
 
         return post;

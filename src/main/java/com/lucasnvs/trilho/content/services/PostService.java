@@ -4,6 +4,8 @@ import com.lucasnvs.trilho.content.domain.Post;
 import com.lucasnvs.trilho.content.dto.CreatePost;
 import com.lucasnvs.trilho.content.dto.ResponsePost;
 import com.lucasnvs.trilho.content.repositories.PostRepository;
+import com.lucasnvs.trilho.shared.services.FileStorageService;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,9 @@ public class PostService {
 
     @Autowired
     private PostMapper postMapper;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     public List<ResponsePost> getAllPosts() {
         List<Post> products = postRepository.findAll();
@@ -32,7 +37,12 @@ public class PostService {
     }
 
     public ResponsePost savePost(CreatePost createPost) {
+        val image = createPost.getImageResource();
         Post post = postMapper.toEntity(createPost);
+        if (image != null && !image.isEmpty()) {
+            String fileName = fileStorageService.saveFile("posts", image);
+            post.setImageResource(fileName);
+        }
         Post savedPost = postRepository.save(post);
         return postMapper.toResponse(savedPost);
     }

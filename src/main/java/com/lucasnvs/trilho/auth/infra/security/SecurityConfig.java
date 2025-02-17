@@ -1,5 +1,6 @@
 package com.lucasnvs.trilho.auth.infra.security;
 
+import com.lucasnvs.trilho.shared.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,15 +32,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts").permitAll()
+                        .requestMatchers(HttpMethod.GET, Constants.ENDPOINT_POST).permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll() // TODO: CHECK AUTHORIZATION
                         .anyRequest().authenticated()
                 )
-                .cors(withDefaults())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -60,10 +61,10 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200")
+                        .allowedOrigins("*")  // production: use real domain
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true);
+                        .exposedHeaders("*");
             }
         };
     }

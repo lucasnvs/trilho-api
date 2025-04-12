@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(Constants.ENDPOINT_POST)
+@RequestMapping(Constants.ENDPOINT_CONTENT)
 public class PostController {
 
     @Autowired
